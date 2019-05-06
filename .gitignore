@@ -1,0 +1,11 @@
+### Laravel ###
+vendor/
+node_modules/
+npm-debug.log
+
+# Laravel 5 
+public/storage
+storage/*.key
+.env.*.php
+.env.php
+.env
