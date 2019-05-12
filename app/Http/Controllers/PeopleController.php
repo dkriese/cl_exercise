@@ -72,11 +72,10 @@ class PeopleController extends Controller
             $person['secret'] = md5($person['secret']);
             $people[] = $person;
         }
-        //dd($people);
+
         $age = array_column($people, 'age');
 
         array_multisort($age, SORT_DESC, $people);
-        //dd($people);
         return $people;
     }
 }
