@@ -1,5 +1,10 @@
 <template>
   <div class="mt-4">
+    <div>
+      <ul>
+        <li v-for="record in records">{{ record }}</li>
+      </ul>
+    </div>
     <div v-if="validationErrors">
       <ul class="alert alert-danger">
         <li v-for="(value, key, index) in validationErrors">{{ value[0] }}</li>
@@ -30,9 +35,10 @@
         <label for="secret">Secret</label>
         <input type="text" class="form-control" v-model="person.secret" id="secret">
       </div>
-
-      <button class="btn btn-primary mb-4">submit</button>
+      <button class="btn btn-primary mb-4 py-2" @click.prevent="addPerson">add person</button>
+      <button class="btn btn-primary mb-4" v-if="records.length">submit</button>
     </form>
+
     <div class="card card-body mb-2" v-for="(record, key, index) in people" v-bind:key="record.id">
       <p>Emails: {{ record.emails }}</p>
       <p>People: {{ record.person }}</p>
@@ -57,6 +63,7 @@ export default {
   data() {
     return {
       people: [],
+      records: [],
       person: {
         first_name: "",
         last_name: "",
@@ -66,10 +73,10 @@ export default {
       },
       pagination: {},
       edit: false,
-      validationErrors: ''
+      validationErrors: ""
     };
   },
-  props: ['errors'],
+  props: ["errors"],
   created() {
     this.fetchPeople();
   },
@@ -132,18 +139,14 @@ export default {
       };
       this.pagination = pagination;
     },
+    addPerson() {
+      this.records.push(this.person);
+      this.person = {};
+    },
     addPeople() {
       axios
         .post("/api/people", {
-          data: [
-            {
-              first_name: this.person.first_name,
-              last_name: this.person.last_name,
-              age: this.person.age,
-              email: this.person.email,
-              secret: this.person.secret
-            }
-          ]
+          data: this.records
         })
         .then()
         .then(data => {
@@ -152,7 +155,7 @@ export default {
           this.fetchPeople();
         })
         .catch(error => {
-          if (error.response.status == 422){
+          if (error.response.status == 422) {
             this.validationErrors = error.response.data.errors;
           }
         });
